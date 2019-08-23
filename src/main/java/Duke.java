@@ -37,7 +37,9 @@ public class Duke {
                     String cmd = phrase;
                     String[] donecmd = cmd.split(" ");
                     int listNo = Integer.parseInt(donecmd[1]) - 1;
-                    CommandList[listNo].MarkasDone();
+                    if (CommandList[listNo] != null) {
+                        CommandList[listNo].MarkasDone();
+                    }
                     System.out.println("\t[" + CommandList[listNo].getStatusIcon() + "] " + CommandList[listNo].description);
                 }
                 else {
