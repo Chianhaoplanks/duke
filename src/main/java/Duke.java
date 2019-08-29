@@ -1,4 +1,4 @@
-import java.nio.Buffer;
+import java.lang.Enum;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -23,7 +23,7 @@ public class Duke {
 
         System.out.println(greeting);
         //Taking in user input
-        Task[] CommandList = new Task[100];
+        Task[] CommandList = LoadFromFile();
         Scanner userInput = new Scanner(System.in);
         boolean goodbye = false;
         int idx = 0;
@@ -127,7 +127,6 @@ public class Duke {
         return ("\tNow you have " + idx + " tasks in the list.");
     }
 
-
     private static void addtoFile(Task task) {
         File file = new File("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
         try {
@@ -191,6 +190,64 @@ public class Duke {
             e.printStackTrace();
         }
     }
+
+    private static Task[] LoadFromFile () {
+        try {
+            File file = new File("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
+            BufferedReader br = new BufferedReader(new FileReader("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt"));
+            String line;
+            Task[] list = new Task[100];
+            int idx = 0;
+            while ((line = br.readLine()) != null) {
+                String listedtask = line.trim();
+                String[] task = listedtask.split(" ", 3);
+                String value = "dd/MM/yyyy HHmm";
+                LocalDateTime ldt = null;
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(value);
+                switch (task[0]) {
+                    //Done first then undone
+                    case "\t[T][\u2713]":
+                        list[idx] = new ToDos(task[1]);
+                        list[idx].MarkasDone();
+                        break;
+                    case "\t[T][\u2718]":
+                        list[idx] = new ToDos(task[1]);
+                        break;
+                    case "\t[D][\u2713]":
+                        ldt = LocalDateTime.parse(task[2].substring(5, task[2].length() - 1));
+                        list[idx] = new Deadline(task[1], ldt);
+                        list[idx].MarkasDone();
+                        break;
+                    case "\t[D][\u2718]":
+                        ldt = LocalDateTime.parse(task[2].substring(5, task[2].length() - 1));
+                        list[idx] = new Deadline(task[1], ldt);
+                        break;
+                    case "\t[E][\u2713]":
+                        ldt = LocalDateTime.parse(task[2].substring(5, task[2].length() - 1));
+                        list[idx] = new Event(task[1], ldt);
+                        list[idx].MarkasDone();
+                        break;
+                    case "\t[E][\u2718]":
+                        ldt = LocalDateTime.parse(task[2].substring(5, task[2].length() - 1));
+                        list[idx] = new Event(task[1], ldt);
+                        break;
+                }
+                idx++;
+            }
+            return list;
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (InputException e) {
+            e.printStackTrace();
+        }
+        return new Task[100];
+    }
+
     static Boolean dateFormatValid(String line) {
         String value = "dd/MM/yyyy HHmm";
         LocalDateTime ldt = null;
