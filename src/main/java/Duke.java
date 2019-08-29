@@ -1,5 +1,6 @@
 import java.nio.Buffer;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -60,8 +61,8 @@ public class Duke {
                         if (dltask.length < 2) {
                             throw new InputException("eh your deadline by when arh LOL");
                         }
-                        else {
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+                        else if (dateFormatValid(dltask[1])){
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HHmm");
                             LocalDateTime ldt = LocalDateTime.parse(dltask[1], formatter);
                             Deadline dls = new Deadline(dltask[0], ldt);
                             CommandList[idx] = dls;
@@ -82,8 +83,8 @@ public class Duke {
                         if (evtask.length < 2) {
                             throw new InputException("eh your event when arh LOL");
                         }
-                        else {
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+                        else if (dateFormatValid(evtask[1])) {
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HHmm");
                             LocalDateTime ldt = LocalDateTime.parse(evtask[1], formatter);
                             Event evs = new Event(evtask[0], ldt);
                             CommandList[idx] = evs;
@@ -108,7 +109,6 @@ public class Duke {
                         if (CommandList[listNo] != null) {
                             RemoveLinefromFile(CommandList[listNo]);
                             CommandList[listNo].MarkasDone();
-                            addtoFile(CommandList[listNo]);
                         }
                         System.out.println('\t' + CommandList[listNo].toString());
                     }
@@ -155,6 +155,7 @@ public class Duke {
     }
     private static void RemoveLinefromFile(Task task) {
         try {
+            Boolean ammended = false;
             File file = new File("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
             File tempFile = new File(file.getAbsolutePath() + ".tmp");
             BufferedReader br = new BufferedReader(new FileReader("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt"));
@@ -162,8 +163,10 @@ public class Duke {
             String line;
             while ((line = br.readLine()) != null) {
                 String trimline = line.trim();
-                if (trimline.equals(task.toString())) {
-                    continue;
+                if (trimline.equals(task.toString()) && !ammended) {
+                    Task donetask = task;
+                    donetask.MarkasDone();
+                    pw.write("\t" + donetask.toString() + "\n");
                 }
                 else {
                     pw.write(line + "\n");
@@ -186,6 +189,20 @@ public class Duke {
         }
         catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    static Boolean dateFormatValid(String line) {
+        String value = "dd/MM/yyyy HHmm";
+        LocalDateTime ldt = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(value);
+        try {
+            ldt = LocalDateTime.parse(line, formatter);
+            return true;
+        }
+        catch (DateTimeParseException e) {
+            System.out.println("Date format not valid. Please try again :)");
+            e.getStackTrace();
+            return false;
         }
     }
 }
