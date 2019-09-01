@@ -1,16 +1,22 @@
 import java.lang.Enum;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.*;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+<<<<<<< HEAD
 import java.util.ArrayList;
 
 enum update{
-    DONE, REMOVE,
+    DONE, REMOVE;
+=======
+enum update {
+    DONE, REMOVE;
+>>>>>>> branch-level-6
 }
 
 public class Duke {
@@ -30,6 +36,9 @@ public class Duke {
         //Taking in user input
         Storage storage = new Storage("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
         ArrayList<Task> CommandList = storage.load();
+        Scanner userInput = new Scanner(System.in);
+        boolean goodbye = false;
+        ArrayList<Task> CommandList = LoadFromFile();
         Scanner userInput = new Scanner(System.in);
         boolean goodbye = false;
         while (!goodbye) {
@@ -105,14 +114,27 @@ public class Duke {
                     //mark a task/event as done
                     else if (phrase.contains("done ")) {
                         System.out.println("\tNice! I've marked this task as done:");
-                        String cmd = phrase;
-                        String[] donecmd = cmd.split(" ");
+                        String[] donecmd = phrase.split(" ");
                         int listNo = Integer.parseInt(donecmd[1]) - 1;
                         if (CommandList.get(listNo) != null) {
                             storage.UpdateFile(CommandList.get(listNo), update.DONE);
                             CommandList.get(listNo).MarkasDone();
+                            System.out.println('\t' + CommandList.get(listNo).toString());
+                            UpdateFile(CommandList.get(listNo), update.DONE);
+                            CommandList.get(listNo).MarkasDone();
+                            System.out.println('\t' + CommandList.get(listNo).toString());
                         }
-                        System.out.println('\t' + CommandList.get(listNo).toString());
+                    }
+                    //delete a line
+                    else if (phrase.contains("delete ")) {
+                        System.out.println("\tNoted. I've removed the task:");
+                        String[] deletecmd = phrase.split(" ");
+                        int listNo = Integer.parseInt(deletecmd[1]) - 1;
+                        if (CommandList.get(listNo) != null) {
+                            UpdateFile(CommandList.get(listNo), update.REMOVE);
+                            System.out.println('\t' + CommandList.get(listNo).toString());
+                            CommandList.remove(CommandList.get(listNo));
+                        }
                     }
                     //if input is incorrect show error msg
                     else {
