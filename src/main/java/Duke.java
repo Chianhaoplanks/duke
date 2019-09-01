@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 enum update{
-    DONE, REMOVE,
+    DONE, REMOVE;
 }
 
 public class Duke {
