@@ -1,0 +1,53 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf200
+{\fonttbl\f0\fnil\fcharset0 Consolas;}
+{\colortbl;\red255\green255\blue255;\red87\green96\blue106;\red244\green246\blue249;\red27\green31\blue34;
+\red203\green35\blue57;\red6\green33\blue79;\red7\green68\blue184;}
+{\*\expandedcolortbl;;\cssrgb\c41569\c45098\c49020;\cssrgb\c96471\c97255\c98039;\cssrgb\c14118\c16078\c18039;
+\cssrgb\c84314\c22745\c28627;\cssrgb\c1176\c18431\c38431;\cssrgb\c0\c36078\c77255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sl380\partightenfactor0
+
+\f0\fs27\fsmilli13600 \cf2 \cb3 \expnd0\expndtw0\kerning0
+#!/usr/bin/env bash\cf4 \
+\
+\cf2 # create bin directory if it doesn't exist\cf4 \
+\pard\pardeftab720\sl380\partightenfactor0
+\cf5 if\cf4  [ \cf5 !\cf4  \cf5 -d\cf4  \cf6 "../bin"\cf4  ]\
+\cf5 then\cf4 \
+    mkdir ../bin\
+\cf5 fi\cf4 \
+\
+\pard\pardeftab720\sl380\partightenfactor0
+\cf2 # delete output from previous run\cf4 \
+\pard\pardeftab720\sl380\partightenfactor0
+\cf5 if\cf4  [ \cf5 -e\cf4  \cf6 "./ACTUAL.TXT"\cf4  ]\
+\cf5 then\cf4 \
+    rm ACTUAL.TXT\
+\cf5 fi\cf4 \
+\
+\pard\pardeftab720\sl380\partightenfactor0
+\cf2 # compile the code into the bin folder, terminates if error occurred\cf4 \
+\pard\pardeftab720\sl380\partightenfactor0
+\cf5 if\cf4  \cf5 !\cf4  javac -cp ../src -Xlint:none -d ../bin ../src/main/java/Duke.java\
+\cf5 then\cf4 \
+    \cf7 echo\cf4  \cf6 "********** BUILD FAILURE **********"\cf4 \
+    \cf7 exit\cf4  1\
+\cf5 fi\cf4 \
+\
+\pard\pardeftab720\sl380\partightenfactor0
+\cf2 # run the program, feed commands from input.txt file and redirect the output to the ACTUAL.TXT\cf4 \
+java -classpath ../bin Duke \cf5 <\cf4  duke.txt \cf5 >\cf4  ACTUAL.TXT\
+\
+\cf2 # compare the output to the expected output\cf4 \
+diff ACTUAL.TXT EXPECTED.TXT\
+\pard\pardeftab720\sl380\partightenfactor0
+\cf5 if\cf4  [ $? \cf5 -eq\cf4  0 ]\
+\cf5 then\cf4 \
+    \cf7 echo\cf4  \cf6 "Test result: PASSED"\cf4 \
+    \cf7 exit\cf4  0\
+\cf5 else\cf4 \
+    \cf7 echo\cf4  \cf6 "Test result: FAILED"\cf4 \
+    \cf7 exit\cf4  1\
+\cf5 fi\cf4 \
+}
