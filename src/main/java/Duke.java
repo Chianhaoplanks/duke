@@ -8,17 +8,11 @@ import java.util.StringTokenizer;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-<<<<<<< HEAD
 import java.util.ArrayList;
 
-enum update{
-    DONE, REMOVE;
-=======
 enum update {
     DONE, REMOVE;
->>>>>>> branch-level-6
 }
-
 public class Duke {
     public static void main(String[] args) throws Exception {
         //Greetings
@@ -36,9 +30,6 @@ public class Duke {
         //Taking in user input
         Storage storage = new Storage("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
         ArrayList<Task> CommandList = storage.load();
-        Scanner userInput = new Scanner(System.in);
-        boolean goodbye = false;
-        ArrayList<Task> CommandList = LoadFromFile();
         Scanner userInput = new Scanner(System.in);
         boolean goodbye = false;
         while (!goodbye) {
@@ -120,7 +111,7 @@ public class Duke {
                             storage.UpdateFile(CommandList.get(listNo), update.DONE);
                             CommandList.get(listNo).MarkasDone();
                             System.out.println('\t' + CommandList.get(listNo).toString());
-                            UpdateFile(CommandList.get(listNo), update.DONE);
+                            storage.UpdateFile(CommandList.get(listNo), update.DONE);
                             CommandList.get(listNo).MarkasDone();
                             System.out.println('\t' + CommandList.get(listNo).toString());
                         }
@@ -131,7 +122,7 @@ public class Duke {
                         String[] deletecmd = phrase.split(" ");
                         int listNo = Integer.parseInt(deletecmd[1]) - 1;
                         if (CommandList.get(listNo) != null) {
-                            UpdateFile(CommandList.get(listNo), update.REMOVE);
+                            storage.UpdateFile(CommandList.get(listNo), update.REMOVE);
                             System.out.println('\t' + CommandList.get(listNo).toString());
                             CommandList.remove(CommandList.get(listNo));
                         }
