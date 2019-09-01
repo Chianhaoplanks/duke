@@ -114,6 +114,22 @@ public class Duke {
                         }
                         System.out.println('\t' + CommandList.get(listNo).toString());
                     }
+                    else if (phrase.contains("find ")) {
+                        System.out.println("\tHere are the matching tasks in your list:");
+                        String[] cmd = phrase.split(" ", 2);
+                        if (cmd.length < 2) {
+                            throw new InputException("\tOOPS!!! keyword(s) not found!");
+                        }
+                        else {
+                            int idx = 0;
+                            for (Task task : CommandList) {
+                                if (task.toString().contains(cmd[1])) {
+                                    idx++;
+                                    System.out.println("\t" + idx + ". " + task.toString());
+                                }
+                            }
+                        }
+                    }
                     //if input is incorrect show error msg
                     else {
                         System.out.println("\tOOPS!!! I'm sorry I don't know what that means :-(");
