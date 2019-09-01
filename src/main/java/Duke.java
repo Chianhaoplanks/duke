@@ -7,6 +7,11 @@ import java.util.StringTokenizer;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+
+enum update{
+    DONE, REMOVE,
+}
 
 public class Duke {
     public static void main(String[] args) throws Exception {
@@ -23,10 +28,10 @@ public class Duke {
 
         System.out.println(greeting);
         //Taking in user input
-        Task[] CommandList = LoadFromFile();
+        Storage storage = new Storage("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
+        ArrayList<Task> CommandList = storage.load();
         Scanner userInput = new Scanner(System.in);
         boolean goodbye = false;
-        int idx = 0;
         while (!goodbye) {
             try {
                 if (userInput.hasNextLine()) {
@@ -43,12 +48,11 @@ public class Duke {
                             throw new InputException("OOPS!!! The description for todo cannot be empty");
                         } else {
                             ToDos tds = new ToDos(todotask[1]);
-                            CommandList[idx] = tds;
-                            idx++;
+                            CommandList.add(tds);
                             System.out.println("\tGot it. I've added this task: ");
                             System.out.println("\t\t" + tds.toString());
-                            System.out.println(numberofTasks(idx));
-                            addtoFile(tds);
+                            System.out.println(storage.numberofTasks(CommandList.size()));
+                            storage.addtoFile(tds);
                         }
                     }
                     //Deadline task type
@@ -65,12 +69,11 @@ public class Duke {
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HHmm");
                             LocalDateTime ldt = LocalDateTime.parse(dltask[1], formatter);
                             Deadline dls = new Deadline(dltask[0], ldt);
-                            CommandList[idx] = dls;
-                            idx++;
+                            CommandList.add(dls);
                             System.out.println("\tGot it. I've added this task: ");
                             System.out.println("\t\t" + dls.toString());
-                            System.out.println(numberofTasks(idx));
-                            addtoFile(dls);
+                            System.out.println(storage.numberofTasks(CommandList.size()));
+                            storage.addtoFile(dls);
                         }
                     }
                     //Event task type
@@ -87,18 +90,17 @@ public class Duke {
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HHmm");
                             LocalDateTime ldt = LocalDateTime.parse(evtask[1], formatter);
                             Event evs = new Event(evtask[0], ldt);
-                            CommandList[idx] = evs;
-                            idx++;
+                            CommandList.add(evs);
                             System.out.println("\tGot it. I've added this task: ");
                             System.out.println("\t\t" + evs.toString());
-                            System.out.println(numberofTasks(idx));
-                            addtoFile(evs);
+                            System.out.println(storage.numberofTasks(CommandList.size()));
+                            storage.addtoFile(evs);
                         }
                     }
                     //list out all the tasks
                     else if (phrase.equals("list")) {
                         System.out.println("\tHere are all the tasks in your list: ");
-                        readfromFile();
+                        storage.readFile();
                     }
                     //mark a task/event as done
                     else if (phrase.contains("done ")) {
@@ -106,11 +108,11 @@ public class Duke {
                         String cmd = phrase;
                         String[] donecmd = cmd.split(" ");
                         int listNo = Integer.parseInt(donecmd[1]) - 1;
-                        if (CommandList[listNo] != null) {
-                            RemoveLinefromFile(CommandList[listNo]);
-                            CommandList[listNo].MarkasDone();
+                        if (CommandList.get(listNo) != null) {
+                            storage.UpdateFile(CommandList.get(listNo), update.DONE);
+                            CommandList.get(listNo).MarkasDone();
                         }
-                        System.out.println('\t' + CommandList[listNo].toString());
+                        System.out.println('\t' + CommandList.get(listNo).toString());
                     }
                     //if input is incorrect show error msg
                     else {
@@ -123,131 +125,6 @@ public class Duke {
             }
         }
     }
-    static String numberofTasks(int idx) {
-        return ("\tNow you have " + idx + " tasks in the list.");
-    }
-
-    private static void addtoFile(Task task) {
-        File file = new File("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
-        try {
-            FileWriter writer  = new FileWriter(file, true);
-            writer.write("\t" + task.toString() + "\n");
-            writer.close();
-        }
-        catch(IOException error) {
-            System.err.format("IOException: %s%n", error);
-        }
-    }
-    private static void readfromFile() {
-        File file = new File("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
-        try {
-            FileReader reader  = new FileReader(file);
-            int i;
-            while ((i = reader.read())!= -1) {
-                System.out.print((char)i);
-            }
-            reader.close();
-        }
-        catch(IOException error) {
-            System.err.format("IOException: %s%n", error);
-        }
-    }
-    private static void RemoveLinefromFile(Task task) {
-        try {
-            Boolean ammended = false;
-            File file = new File("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
-            File tempFile = new File(file.getAbsolutePath() + ".tmp");
-            BufferedReader br = new BufferedReader(new FileReader("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt"));
-            BufferedWriter pw = new BufferedWriter(new FileWriter(tempFile));
-            String line;
-            while ((line = br.readLine()) != null) {
-                String trimline = line.trim();
-                if (trimline.equals(task.toString()) && !ammended) {
-                    Task donetask = task;
-                    donetask.MarkasDone();
-                    pw.write("\t" + donetask.toString() + "\n");
-                }
-                else {
-                    pw.write(line + "\n");
-                    pw.flush();
-                }
-            }
-            pw.close();
-            br.close();
-
-            if (!file.delete()) {
-                System.out.println("Cannot delete file");
-                return;
-            }
-            if (!tempFile.renameTo(file)) {
-                System.out.println("Could not rename file");
-            }
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static Task[] LoadFromFile () {
-        try {
-            File file = new File("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
-            BufferedReader br = new BufferedReader(new FileReader("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt"));
-            String line;
-            Task[] list = new Task[100];
-            int idx = 0;
-            while ((line = br.readLine()) != null) {
-                String listedtask = line.trim();
-                String[] task = listedtask.split(" ", 3);
-                String value = "dd/MM/yyyy HHmm";
-                LocalDateTime ldt = null;
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(value);
-                switch (task[0]) {
-                    //Done first then undone
-                    case "\t[T][\u2713]":
-                        list[idx] = new ToDos(task[1]);
-                        list[idx].MarkasDone();
-                        break;
-                    case "\t[T][\u2718]":
-                        list[idx] = new ToDos(task[1]);
-                        break;
-                    case "\t[D][\u2713]":
-                        ldt = LocalDateTime.parse(task[2].substring(5, task[2].length() - 1));
-                        list[idx] = new Deadline(task[1], ldt);
-                        list[idx].MarkasDone();
-                        break;
-                    case "\t[D][\u2718]":
-                        ldt = LocalDateTime.parse(task[2].substring(5, task[2].length() - 1));
-                        list[idx] = new Deadline(task[1], ldt);
-                        break;
-                    case "\t[E][\u2713]":
-                        ldt = LocalDateTime.parse(task[2].substring(5, task[2].length() - 1));
-                        list[idx] = new Event(task[1], ldt);
-                        list[idx].MarkasDone();
-                        break;
-                    case "\t[E][\u2718]":
-                        ldt = LocalDateTime.parse(task[2].substring(5, task[2].length() - 1));
-                        list[idx] = new Event(task[1], ldt);
-                        break;
-                }
-                idx++;
-            }
-            return list;
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        catch (InputException e) {
-            e.printStackTrace();
-        }
-        return new Task[100];
-    }
-
     static Boolean dateFormatValid(String line) {
         String value = "dd/MM/yyyy HHmm";
         LocalDateTime ldt = null;
