@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-enum update {
+enum update{
     DONE, REMOVE;
 }
 public class Duke {
@@ -125,6 +125,22 @@ public class Duke {
                             storage.UpdateFile(CommandList.get(listNo), update.REMOVE);
                             System.out.println('\t' + CommandList.get(listNo).toString());
                             CommandList.remove(CommandList.get(listNo));
+                        }
+                    }
+                    else if (phrase.contains("find ")) {
+                        System.out.println("\tHere are the matching tasks in your list:");
+                        String[] cmd = phrase.split(" ", 2);
+                        if (cmd.length < 2) {
+                            throw new InputException("\tOOPS!!! keyword(s) not found!");
+                        }
+                        else {
+                            int idx = 0;
+                            for (Task task : CommandList) {
+                                if (task.toString().contains(cmd[1])) {
+                                    idx++;
+                                    System.out.println("\t" + idx + ". " + task.toString());
+                                }
+                            }
                         }
                     }
                     //if input is incorrect show error msg
