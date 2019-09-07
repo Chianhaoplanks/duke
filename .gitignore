@@ -12,3 +12,8 @@ src/main/resources/docs/
 .DS_Store
 *.iml
 bin/
+
+# Don't track content of the .txt files 
+text-ui-test/
+*.txt
+src/main/duke.txt

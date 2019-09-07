@@ -1,5 +1,6 @@
 import java.lang.Enum;
 import java.io.*;
+import java.nio.Buffer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -83,9 +84,13 @@ public class Storage {
     public static void readFile() {
         try {
             FileReader reader  = new FileReader(file);
-            int i;
-            while ((i = reader.read())!= -1) {
-                System.out.print((char)i);
+            BufferedReader br = new BufferedReader(reader);
+            String line;
+            int i = 0;
+            while ((line = br.readLine()) != null) {
+                String trimline = line.trim();
+                i++;
+                System.out.println("\t\t" + (i) + ". " + trimline);
             }
             reader.close();
         }
@@ -108,9 +113,7 @@ public class Storage {
                             Task donetask = task;
                             donetask.MarkasDone();
                             pw.write("\t" + donetask.toString() + "\n");
-                            ammended = true;
                         case REMOVE:
-                            ammended = true;
                             continue;
                     }
                 }
