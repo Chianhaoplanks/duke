@@ -14,4 +14,7 @@ src/main/resources/docs/
 bin/
 
 # Don't track content of the .txt files 
+text-ui-test/ACTUAL.txt
+text-ui-test/EXPECTED.txt
+text-ui-test/input.txt
 src/main/duke.txt
