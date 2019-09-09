@@ -5,7 +5,7 @@
  */
 public class InputException extends Exception {
     /**
-     * Constructs the Exception
+     * Constructs the Exception when the input format is invalid
      * @param message the error message that is printed upon throwing the exception
      */
     public InputException(String message) {
