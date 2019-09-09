@@ -5,18 +5,46 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * Storage is a type of class that handles the writing, reading and updating the list
+ * in Duke to your local hard disk.
+ * @author Aw Chian Hao
+ */
 public class Storage {
+    /**
+     * The path that leads to the file at which the user input will be written to, read from, and updated to
+     * in the local hard disk. The filepath cannot be changed during the program
+     */
     private static String filepath;
+    /**
+     * The file that is drawn from filepath which cannot be changed throughout the program
+     */
     private static File file;
+
+    /**
+     * Constructs the Storage class, a file is drawn from the filepath to be used during the program
+     * @param filepath the String which contains the path to the local file
+     */
     public Storage (String filepath) {
         this.filepath = filepath;
         this.file = new File(filepath);
     }
+
+    /**
+     * This method returns an ArrayList of type Task after reading what had been written to the local hard disk
+     * in a previous session. Previous session's list can be loaded after exiting Duke
+     * @return ArrayList of type Task with initial capacity of 100.
+     */
     public static ArrayList<Task> load() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(filepath));
             String line;
             ArrayList<Task> list = new ArrayList<Task>(100);
+            /**
+             * Reads the file line by line. Reading the lines produced by the toString() function
+             * in those of class Task to check its subclass, description, status, and LocalDateTime if
+             * applicable
+             */
             while ((line = br.readLine()) != null) {
                 String listedtask = line.trim();
                 String[] task = listedtask.split(" ", 3);
@@ -71,6 +99,11 @@ public class Storage {
         }
         return new ArrayList<Task>(100);
     }
+
+    /**
+     * This method writes the line from toString() to the local file
+     * @param task the task that is being written to the file
+     */
     public static void addtoFile(Task task) {
         try {
             FileWriter writer  = new FileWriter(file, true);
@@ -81,6 +114,10 @@ public class Storage {
             System.err.format("IOException: %s%n", error);
         }
     }
+
+    /**
+     * This method reads and prints directly from the file
+     */
     public static void readFile() {
         try {
             FileReader reader  = new FileReader(file);
@@ -98,6 +135,13 @@ public class Storage {
             System.err.format("IOException: %s%n", error);
         }
     }
+
+    /**
+     * This method Updates the file for two scenarios: when a task is completed, or when a task
+     * is deleted
+     * @param task the Task that is supposed to be deleted or updated
+     * @param Update an Enum that tells the method if a task should be marked as Done or deleted from the file
+     */
     public static void UpdateFile(Task task, update Update) {
         try {
             Boolean ammended = false;
@@ -142,6 +186,11 @@ public class Storage {
         }
     }
 
+    /**
+     * This method returns a line which shows how many tasks are in the list
+     * @param idx the number of tasks in the list
+     * @return a string which tells the user how many tasks are in the list
+     */
     public static String numberofTasks(int idx) {
         return ("\tNow you have " + idx + " tasks in the list.");
     }

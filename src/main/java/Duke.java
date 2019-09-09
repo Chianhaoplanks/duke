@@ -10,9 +10,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+/**
+ * Duke is an interactive checklist where tasks, deadlines and events can be recorded
+ * and continuously updated through user input.
+ * @author Aw Chian Hao
+ */
 public class Duke {
     public static void main(String[] args) {
-        //Greetings
+        /**
+         * The opening logo and greetings from Duke is printed out here.
+         */
         String logo = " ____        _        \n"
                 + "|  _ \\ _   _| | _____ \n"
                 + "| | | | | | | |/ / _ \\\n"
@@ -24,7 +31,10 @@ public class Duke {
                 + "What can I do for you?\n";
 
         System.out.println(greeting);
-        //Taking in user input
+        /**
+         * Where in the local hard disk Duke writes to, how to handle user input and how the
+         * program runs are done here
+         */
         Storage storage = new Storage("/Users/chianhaoaw/Documents/GitHub/duke/src/main/duke.txt");
         ArrayList<Task> CommandList = storage.load();
         Scanner userInput = new Scanner(System.in);

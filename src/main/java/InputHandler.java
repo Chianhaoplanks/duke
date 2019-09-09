@@ -5,30 +5,56 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+/**
+ * enum Update is used to tell the method UpdateFile if the program should mark a task
+ * as done or delete it from the file
+ */
 enum update{
     DONE, REMOVE;
 }
 
+/**
+ * InputHandler handles the user input into Duke and what to do with it
+ * @author Aw Chian Hao
+ */
 public class InputHandler {
     private Scanner userInput;
     private Boolean goodbye;
     private Storage storage;
+    /**
+     * Constructs InputHandler. Boolean variable goodbye determines if the Duke program should
+     * continue receiving user's input
+     * @param userInput type Scanner which is used to read the user's input to Duke
+     * @param storage contains the file and filepath where Duke will write and update to in the program
+     */
     public InputHandler(Scanner userInput, Storage storage) {
         this.userInput = userInput;
         this.storage = storage;
         this.goodbye = false;
     }
+
+    /**
+     * This method handles the user input depending on what the user's commands are.
+     * This method will continuously receive input until the user enters "bye" to the program
+     * whereby goodbye will turn true and the method exits the while loop
+     * @param CommandList the ArrayList at which the tasks from the file are stored as a collection of
+     *                    type Task
+     */
     public void HandleInput(ArrayList<Task> CommandList) {
         while (!goodbye) {
             try {
                 if (userInput.hasNextLine()) {
                     String phrase = userInput.nextLine();
-                    //says bye and exits the program
+                    /**
+                     * Bids user goodbye and ends the program
+                     */
                     if (phrase.equals("bye")) {
                         System.out.println("\tBye. Hope to see you again soon!");
                         goodbye = true;
                     }
-                    //ToDos task type
+                    /**
+                     * Registering tasks of type ToDos
+                     */
                     else if (phrase.startsWith("todo")) {
                         String[] todotask = phrase.split(" ", 2);
                         if (todotask.length < 2) {
@@ -42,7 +68,9 @@ public class InputHandler {
                             storage.addtoFile(tds);
                         }
                     }
-                    //Deadline task type
+                    /**
+                     * Registering tasks of type Deadline
+                     */
                     else if (phrase.startsWith("deadline")) {
                         String[] cmd = phrase.split("deadline ", 2);
                         if (cmd[1].isBlank() || !cmd[1].contains("/by") || cmd.length < 2) {
@@ -63,7 +91,9 @@ public class InputHandler {
                             storage.addtoFile(dls);
                         }
                     }
-                    //Event task type
+                    /**
+                     * Registering tasks of type Event
+                     */
                     else if (phrase.startsWith("event")) {
                         String[] cmd = phrase.split("event ", 2);
                         if (cmd[1].isBlank() || !cmd[1].contains("/at") || cmd.length < 2) {
@@ -84,12 +114,16 @@ public class InputHandler {
                             storage.addtoFile(evs);
                         }
                     }
-                    //list out all the tasks
+                    /**
+                     * List out all the tasks written in the file
+                     */
                     else if (phrase.equals("list")) {
                         System.out.println("\tHere are all the tasks in your list: ");
                         storage.readFile();
                     }
-                    //mark a task/event as done
+                    /**
+                     * Mark a task/event/deadline as done
+                     */
                     else if (phrase.contains("done ")) {
                         System.out.println("\tNice! I've marked this task as done:");
                         String[] donecmd = phrase.split(" ");
@@ -100,7 +134,9 @@ public class InputHandler {
                             System.out.println('\t' + CommandList.get(listNo).toString());
                         }
                     }
-                    //delete a line
+                    /**
+                     * Delete a task from the local hard disk
+                     */
                     else if (phrase.contains("delete ")) {
                         System.out.println("\tNoted. I've removed the task:");
                         String[] deletecmd = phrase.split(" ");
@@ -111,6 +147,9 @@ public class InputHandler {
                             CommandList.remove(CommandList.get(listNo));
                         }
                     }
+                    /**
+                     * List out all the tasks that contain certain keyword(s)
+                     */
                     else if (phrase.contains("find ")) {
                         System.out.println("\tHere are the matching tasks in your list:");
                         String[] cmd = phrase.split(" ", 2);
@@ -127,7 +166,10 @@ public class InputHandler {
                             }
                         }
                     }
-                    //if input is incorrect show error msg
+                    /**
+                     * If the input does not adhere to the above formats, print out an error message
+                     * and continue running the program
+                     */
                     else {
                         System.out.println("\tOOPS!!! I'm sorry I don't know what that means :-(");
                     }
@@ -138,6 +180,12 @@ public class InputHandler {
             }
         }
     }
+
+    /**
+     * This method checks if the format for inputting the date and time for Event/Deadline is valid
+     * @param line String of input that is to be assessed
+     * @return returns false if the format of the line is invalid
+     */
     static Boolean dateFormatValid(String line) {
         String value = "dd/MM/yyyy HHmm";
         LocalDateTime ldt = null;
