@@ -116,6 +116,7 @@ public class Storage {
                         case REMOVE:
                             continue;
                     }
+                    ammended = true;
                 }
                 else {
                     pw.write(line + "\n");
